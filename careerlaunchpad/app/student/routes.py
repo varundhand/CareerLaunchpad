@@ -1,9 +1,5 @@
 from flask import Blueprint
 
+student_bp = Blueprint("student", __name__, template_folder="templates")
 
-student_bp = Blueprint("student", __name__, url_prefix="/student")
-
-
-@student_bp.route("/")
-def dashboard():
-    return "Student routes stub"
+# Routes will be added in Phase 5

@@ -1,24 +1,18 @@
 import os
-from pathlib import Path
 
-
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
-    SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key")
-    DATABASE = os.environ.get("DATABASE", str(BASE_DIR / "careerlaunchpad.sqlite3"))
-    UPLOAD_FOLDER = os.environ.get("UPLOAD_FOLDER", str(BASE_DIR / "app" / "static" / "resumes"))
-    MAX_CONTENT_LENGTH = 16 * 1024 * 1024
+    SECRET_KEY = os.environ.get("SECRET_KEY") or "careerlaunchpad-dev-secret-key"
+    DATABASE = os.path.join(BASE_DIR, "careerlaunchpad.db")
+    UPLOAD_FOLDER = os.path.join(BASE_DIR, "app", "static", "resumes")
+    MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 5 MB max upload
+    ALLOWED_EXTENSIONS = {"pdf"}
 
 
 class DevelopmentConfig(Config):
     DEBUG = True
-
-
-class TestingConfig(Config):
-    TESTING = True
-    DATABASE = ":memory:"
 
 
 class ProductionConfig(Config):
@@ -26,8 +20,7 @@ class ProductionConfig(Config):
 
 
 config = {
-    "default": DevelopmentConfig,
     "development": DevelopmentConfig,
-    "testing": TestingConfig,
     "production": ProductionConfig,
+    "default": DevelopmentConfig,
 }

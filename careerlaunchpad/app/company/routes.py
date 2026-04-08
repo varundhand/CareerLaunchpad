@@ -1,9 +1,5 @@
 from flask import Blueprint
 
+company_bp = Blueprint("company", __name__, template_folder="templates")
 
-company_bp = Blueprint("company", __name__, url_prefix="/company")
-
-
-@company_bp.route("/")
-def dashboard():
-    return "Company routes stub"
+# Routes will be added in Phase 4

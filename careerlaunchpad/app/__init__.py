@@ -4,7 +4,7 @@ from flask_login import LoginManager
 from config import config
 
 login_manager = LoginManager()
-login_manager.login_view = "auth.login"
+# login_view will be set in Phase 2 once auth routes exist
 login_manager.login_message = "Please log in to access this page."
 login_manager.login_message_category = "warning"
 
@@ -40,10 +40,10 @@ def create_app(config_name="default"):
     app.register_blueprint(student_bp, url_prefix="/student")
 
     # ── Root redirect ──────────────────────────────────────────────────
-    from flask import redirect, url_for
+    from flask import redirect
 
     @app.route("/")
     def index():
-        return redirect(url_for("auth.login"))
+        return redirect("/login")
 
     return app
