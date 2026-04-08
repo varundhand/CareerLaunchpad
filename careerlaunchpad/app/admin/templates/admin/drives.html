@@ -1,0 +1,72 @@
+{% extends "auth/base.html" %}
+{% block title %}Manage Drives - CareerLaunchpad{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">Drive Management</h3>
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+  </div>
+
+  <form method="GET" action="{{ url_for('admin.drives') }}" class="card p-3 mb-3">
+    <div class="row g-2 align-items-end">
+      <div class="col-12 col-md-9">
+        <label class="form-label">Filter by status</label>
+        <select class="form-select" name="status">
+          <option value="" {% if not status %}selected{% endif %}>All</option>
+          <option value="pending" {% if status == 'pending' %}selected{% endif %}>pending</option>
+          <option value="approved" {% if status == 'approved' %}selected{% endif %}>approved</option>
+          <option value="rejected" {% if status == 'rejected' %}selected{% endif %}>rejected</option>
+          <option value="closed" {% if status == 'closed' %}selected{% endif %}>closed</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-3 d-grid">
+        <button class="btn btn-primary" type="submit">Apply Filter</button>
+      </div>
+    </div>
+  </form>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-striped align-middle mb-0">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Drive</th>
+            <th>Company</th>
+            <th>Status</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for d in drives %}
+          <tr>
+            <td>{{ d.id }}</td>
+            <td>
+              <div class="fw-semibold">{{ d.drive_name }}</div>
+              <div class="text-muted small">{{ d.job_title }}</div>
+            </td>
+            <td>{{ d.company_name }}</td>
+            <td><span class="badge text-bg-secondary">{{ d.status }}</span></td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm">
+                <form method="POST" action="{{ url_for('admin.approve_drive', drive_id=d.id) }}">
+                  <button class="btn btn-success" type="submit">Approve</button>
+                </form>
+                <form method="POST" action="{{ url_for('admin.reject_drive', drive_id=d.id) }}">
+                  <button class="btn btn-warning" type="submit">Reject</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="5" class="text-center text-muted py-4">No drives found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

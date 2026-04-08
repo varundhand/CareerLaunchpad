@@ -1,0 +1,66 @@
+{% extends "auth/base.html" %}
+{% block title %}Manage Students - CareerLaunchpad{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">Student Management</h3>
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+  </div>
+
+  <form method="GET" action="{{ url_for('admin.students') }}" class="card p-3 mb-3">
+    <div class="row g-2 align-items-end">
+      <div class="col-12 col-md-9">
+        <label class="form-label">Search by student name or student ID</label>
+        <input class="form-control" type="text" name="q" value="{{ q }}" placeholder="e.g. Jane or 12">
+      </div>
+      <div class="col-12 col-md-3 d-grid">
+        <button class="btn btn-primary" type="submit">Search</button>
+      </div>
+    </div>
+  </form>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-striped align-middle mb-0">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Department</th>
+            <th>Blacklisted</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in students %}
+          <tr>
+            <td>{{ s.id }}</td>
+            <td>{{ s.name }}</td>
+            <td>{{ s.email }}</td>
+            <td>{{ s.department or '-' }}</td>
+            <td>
+              {% if s.is_blacklisted %}
+                <span class="badge text-bg-danger">yes</span>
+              {% else %}
+                <span class="badge text-bg-success">no</span>
+              {% endif %}
+            </td>
+            <td class="text-end">
+              <form method="POST" action="{{ url_for('admin.blacklist_student', student_id=s.id) }}" class="d-inline">
+                <button class="btn btn-sm btn-danger" type="submit">Blacklist</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="6" class="text-center text-muted py-4">No students found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

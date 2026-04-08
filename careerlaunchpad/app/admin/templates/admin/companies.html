@@ -1,0 +1,62 @@
+{% extends "auth/base.html" %}
+{% block title %}Manage Companies - CareerLaunchpad{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">Company Management</h3>
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+  </div>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-striped align-middle mb-0">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Company</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Account</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in companies %}
+          <tr>
+            <td>{{ c.id }}</td>
+            <td>{{ c.company_name }}</td>
+            <td>{{ c.email }}</td>
+            <td><span class="badge text-bg-secondary">{{ c.approval_status }}</span></td>
+            <td>
+              {% if c.is_active %}
+                <span class="badge text-bg-success">active</span>
+              {% else %}
+                <span class="badge text-bg-danger">inactive</span>
+              {% endif %}
+            </td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm" role="group">
+                <form method="POST" action="{{ url_for('admin.approve_company', company_id=c.id) }}">
+                  <button class="btn btn-success" type="submit">Approve</button>
+                </form>
+                <form method="POST" action="{{ url_for('admin.reject_company', company_id=c.id) }}">
+                  <button class="btn btn-warning" type="submit">Reject</button>
+                </form>
+                <form method="POST" action="{{ url_for('admin.blacklist_company', company_id=c.id) }}">
+                  <button class="btn btn-danger" type="submit">Blacklist</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="6" class="text-center text-muted py-4">No companies found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

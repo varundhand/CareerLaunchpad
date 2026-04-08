@@ -65,11 +65,22 @@ def init_db():
             graduation_year  INTEGER,
             resume_path      TEXT,
             phone            TEXT,
+            is_blacklisted   INTEGER NOT NULL DEFAULT 0,
             created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         )
         """
     )
+
+    # Backward-compatible migration for older databases created before
+    # is_blacklisted was introduced.
+    student_cols = {
+        row["name"] for row in db.execute("PRAGMA table_info(students)").fetchall()
+    }
+    if "is_blacklisted" not in student_cols:
+        db.execute(
+            "ALTER TABLE students ADD COLUMN is_blacklisted INTEGER NOT NULL DEFAULT 0"
+        )
 
     db.execute(
         """
