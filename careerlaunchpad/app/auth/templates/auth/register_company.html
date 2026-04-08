@@ -1,0 +1,112 @@
+{% extends "auth/base.html" %}
+{% block title %}Company Registration — CareerLaunchpad{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center py-5">
+  <div style="width:100%;max-width:480px;">
+
+    <div class="text-center mb-4">
+      <i class="bi bi-building-fill fs-1" style="color:#6f42c1;"></i>
+      <h4 class="fw-bold mt-2">Company Registration</h4>
+      <p class="text-muted small">Register your company on CareerLaunchpad</p>
+      <div class="alert alert-info small py-2">
+        <i class="bi bi-info-circle me-1"></i>
+        Your account will be reviewed by the admin before you can log in.
+      </div>
+    </div>
+
+    <div class="card p-4">
+      <form method="POST" action="/register/company">
+
+        <!-- Contact person name -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold" for="name">Contact person name</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-person"></i></span>
+            <input type="text" id="name" name="name" class="form-control"
+                   placeholder="HR Manager name"
+                   value="{{ request.form.get('name','') }}"
+                   required>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold" for="email">Email address</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+            <input type="email" id="email" name="email" class="form-control"
+                   placeholder="hr@company.com"
+                   value="{{ request.form.get('email','') }}"
+                   required>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold" for="password">Password</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+            <input type="password" id="password" name="password"
+                   class="form-control" placeholder="Min 6 characters"
+                   required minlength="6">
+          </div>
+        </div>
+
+        <!-- Company name -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold" for="company_name">Company name</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-building"></i></span>
+            <input type="text" id="company_name" name="company_name"
+                   class="form-control" placeholder="Acme Corp"
+                   value="{{ request.form.get('company_name','') }}"
+                   required>
+          </div>
+        </div>
+
+        <!-- HR Contact -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold" for="hr_contact">HR contact number</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+            <input type="tel" id="hr_contact" name="hr_contact"
+                   class="form-control" placeholder="+91 98765 43210"
+                   value="{{ request.form.get('hr_contact','') }}">
+          </div>
+        </div>
+
+        <!-- Website -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold" for="website">Website</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-globe"></i></span>
+            <input type="url" id="website" name="website"
+                   class="form-control" placeholder="https://company.com"
+                   value="{{ request.form.get('website','') }}">
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-4">
+          <label class="form-label fw-semibold" for="description">Company description</label>
+          <textarea id="description" name="description" class="form-control"
+                    rows="3" placeholder="Brief about your company...">{{ request.form.get('description','') }}</textarea>
+        </div>
+
+        <button type="submit" class="btn w-100 text-white fw-semibold"
+                style="background:#6f42c1;border-radius:8px;">
+          <i class="bi bi-send me-1"></i> Submit for Approval
+        </button>
+
+      </form>
+    </div>
+
+    <p class="text-center text-muted small mt-3">
+      Already have an account?
+      <a href="/login" class="text-decoration-none" style="color:#6f42c1;">Login here</a>
+    </p>
+
+  </div>
+</div>
+{% endblock %}

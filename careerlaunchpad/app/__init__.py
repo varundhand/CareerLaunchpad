@@ -1,10 +1,10 @@
 import os
-from flask import Flask
+from flask import Flask, redirect, url_for
 from flask_login import LoginManager
 from config import config
 
 login_manager = LoginManager()
-# login_view will be set in Phase 2 once auth routes exist
+login_manager.login_view = "auth.login"
 login_manager.login_message = "Please log in to access this page."
 login_manager.login_message_category = "warning"
 
@@ -13,7 +13,6 @@ def create_app(config_name="default"):
     app = Flask(__name__, template_folder="templates")
     app.config.from_object(config[config_name])
 
-    # Ensure the uploads folder exists
     os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
     # ── Flask-Login ────────────────────────────────────────────────────
@@ -40,10 +39,8 @@ def create_app(config_name="default"):
     app.register_blueprint(student_bp, url_prefix="/student")
 
     # ── Root redirect ──────────────────────────────────────────────────
-    from flask import redirect
-
     @app.route("/")
     def index():
-        return redirect("/login")
+        return redirect(url_for("auth.login"))
 
     return app

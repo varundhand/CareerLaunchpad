@@ -1,0 +1,63 @@
+{% extends "auth/base.html" %}
+{% block title %}Login — CareerLaunchpad{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center"
+     style="min-height: calc(100vh - 120px);">
+  <div style="width: 100%; max-width: 420px;">
+
+    <!-- Logo / heading -->
+    <div class="text-center mb-4">
+      <i class="bi bi-rocket-takeoff-fill fs-1" style="color:#6f42c1;"></i>
+      <h4 class="fw-bold mt-2">Welcome back</h4>
+      <p class="text-muted small">Sign in to CareerLaunchpad</p>
+    </div>
+
+    <div class="card p-4">
+      <form method="POST" action="/login">
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold" for="email">Email address</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+            <input
+              type="email" id="email" name="email"
+              class="form-control" placeholder="you@example.com"
+              value="{{ request.form.get('email', '') }}"
+              required autofocus>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label fw-semibold" for="password">Password</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+            <input
+              type="password" id="password" name="password"
+              class="form-control" placeholder="••••••••"
+              required minlength="6">
+          </div>
+        </div>
+
+        <button type="submit" class="btn w-100 text-white fw-semibold"
+                style="background:#6f42c1;border-radius:8px;">
+          <i class="bi bi-box-arrow-in-right me-1"></i> Login
+        </button>
+
+      </form>
+    </div>
+
+    <p class="text-center text-muted small mt-3">
+      Don't have an account?
+      <a href="/register/student" class="text-decoration-none" style="color:#6f42c1;">
+        Register as Student
+      </a>
+      &nbsp;·&nbsp;
+      <a href="/register/company" class="text-decoration-none" style="color:#6f42c1;">
+        Register as Company
+      </a>
+    </p>
+
+  </div>
+</div>
+{% endblock %}
