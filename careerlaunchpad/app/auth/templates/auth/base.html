@@ -13,34 +13,210 @@
         rel="stylesheet"/>
 
   <style>
-    body { background-color: #f8f9fa; }
+    :root {
+      --bg-start: #081221;
+      --bg-mid: #132238;
+      --bg-end: #1e2f4a;
+      --glass-bg: rgba(255, 255, 255, 0.12);
+      --glass-border: rgba(255, 255, 255, 0.18);
+      --glass-shadow: 0 18px 50px rgba(3, 10, 23, 0.28);
+      --accent: #8b5cf6;
+      --accent-2: #22c55e;
+      --text-strong: #f8fbff;
+      --text-soft: rgba(248, 251, 255, 0.78);
+    }
+
+    html, body { min-height: 100%; }
+
+    body {
+      background:
+        radial-gradient(circle at top left, rgba(139, 92, 246, 0.28), transparent 28%),
+        radial-gradient(circle at top right, rgba(34, 197, 94, 0.16), transparent 24%),
+        linear-gradient(135deg, var(--bg-start), var(--bg-mid) 48%, var(--bg-end));
+      color: var(--text-strong);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent 88%);
+      opacity: 0.45;
+      z-index: 0;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at center, transparent 35%, rgba(0,0,0,0.24) 100%);
+      z-index: 0;
+    }
+
+    .page-shell,
+    nav,
+    .container {
+      position: relative;
+      z-index: 1;
+    }
 
     /* ── Navbar ── */
-    .navbar-brand span.brand-accent { color: #6f42c1; }
+    .navbar {
+      background: rgba(9, 16, 29, 0.72) !important;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+
+    .navbar-brand span.brand-accent { color: #c4b5fd; }
+
+    .navbar .nav-link,
+    .navbar .navbar-brand,
+    .navbar .btn {
+      color: var(--text-strong) !important;
+    }
+
+    .navbar .btn-outline-light:hover {
+      color: #081221 !important;
+      background: #ffffff;
+    }
 
     /* ── Sidebar (dashboards) ── */
     .sidebar {
       min-height: calc(100vh - 56px);
-      background: #fff;
-      border-right: 1px solid #dee2e6;
+      background: rgba(255,255,255,0.08);
+      border-right: 1px solid rgba(255,255,255,0.14);
       padding-top: 1.5rem;
+      backdrop-filter: blur(18px);
     }
     .sidebar .nav-link {
-      color: #495057;
+      color: var(--text-soft);
       border-radius: 8px;
       margin-bottom: 2px;
       padding: 0.55rem 1rem;
     }
     .sidebar .nav-link:hover,
     .sidebar .nav-link.active {
-      background: #f0ebff;
-      color: #6f42c1;
+      background: rgba(139, 92, 246, 0.18);
+      color: #ffffff;
     }
     .sidebar .nav-link i { margin-right: 8px; }
 
     /* ── Cards ── */
-    .card { border: none; box-shadow: 0 1px 4px rgba(0,0,0,.08); border-radius: 12px; }
+    .card {
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+      border-radius: 18px;
+      background: var(--glass-bg);
+      color: var(--text-strong);
+      backdrop-filter: blur(18px);
+    }
     .stat-card { border-left: 4px solid; }
+
+    .card-header {
+      background: rgba(255,255,255,0.05) !important;
+      border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+      color: var(--text-strong);
+    }
+
+    .table {
+      --bs-table-color: var(--text-strong);
+      --bs-table-bg: transparent;
+      --bs-table-striped-bg: rgba(255,255,255,0.04);
+      --bs-table-hover-bg: rgba(139, 92, 246, 0.12);
+      --bs-table-border-color: rgba(255,255,255,0.1);
+    }
+
+    .table thead th {
+      color: var(--text-soft);
+      border-bottom-color: rgba(255,255,255,0.12);
+    }
+
+    .table-responsive {
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .text-muted,
+    .form-text {
+      color: rgba(248, 251, 255, 0.72) !important;
+    }
+
+    .form-control,
+    .form-select,
+    textarea.form-control,
+    input.form-control {
+      background: rgba(255, 255, 255, 0.10);
+      color: var(--text-strong);
+      border: 1px solid rgba(255,255,255,0.16);
+      backdrop-filter: blur(12px);
+    }
+
+    .form-control::placeholder,
+    .form-select::placeholder,
+    textarea.form-control::placeholder {
+      color: rgba(248, 251, 255, 0.5);
+    }
+
+    .form-control:focus,
+    .form-select:focus,
+    textarea.form-control:focus {
+      border-color: rgba(196, 181, 253, 0.75);
+      box-shadow: 0 0 0 0.25rem rgba(139, 92, 246, 0.18);
+      background: rgba(255,255,255,0.13);
+      color: var(--text-strong);
+    }
+
+    .btn {
+      border-radius: 12px;
+    }
+
+    .btn-primary,
+    .bg-primary {
+      background-color: var(--accent) !important;
+      border-color: var(--accent) !important;
+    }
+
+    .btn-outline-primary {
+      color: #d8c5ff;
+      border-color: rgba(216, 197, 255, 0.55);
+    }
+
+    .btn-outline-primary:hover {
+      background: rgba(139, 92, 246, 0.18);
+      color: #fff;
+    }
+
+    .btn-outline-secondary,
+    .btn-outline-light {
+      border-color: rgba(255,255,255,0.35);
+      color: #fff;
+    }
+
+    .btn-outline-warning,
+    .btn-outline-danger {
+      color: #fff;
+    }
+
+    .alert {
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.10);
+      color: var(--text-strong);
+      backdrop-filter: blur(16px);
+    }
+
+    .page-shell {
+      padding-top: 1rem;
+      padding-bottom: 2rem;
+    }
 
     /* ── Status badges ── */
     .badge-applied    { background:#cfe2ff; color:#084298; }
@@ -151,7 +327,9 @@
 <!-- ════════════════════════════════════════════
      PAGE CONTENT
 ════════════════════════════════════════════ -->
-{% block content %}{% endblock %}
+<main class="page-shell">
+  {% block content %}{% endblock %}
+</main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 {% block extra_scripts %}{% endblock %}

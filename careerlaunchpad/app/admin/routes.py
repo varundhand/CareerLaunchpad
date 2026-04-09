@@ -28,7 +28,40 @@ def dashboard():
         "drives": db.execute("SELECT COUNT(*) AS cnt FROM placement_drives").fetchone()["cnt"],
         "applications": db.execute("SELECT COUNT(*) AS cnt FROM applications").fetchone()["cnt"],
     }
-    return render_template("admin/dashboard.html", stats=stats)
+
+    drive_rows = db.execute(
+        """
+        SELECT d.job_title, d.drive_name, COUNT(a.id) AS applicant_count
+        FROM placement_drives d
+        LEFT JOIN applications a ON a.drive_id = d.id
+        GROUP BY d.id
+        ORDER BY applicant_count DESC, d.created_at DESC
+        LIMIT 7
+        """
+    ).fetchall()
+
+    status_rows = db.execute(
+        "SELECT status, COUNT(*) AS cnt FROM applications GROUP BY status"
+    ).fetchall()
+
+    drive_created_rows = db.execute(
+        """
+        SELECT substr(created_at, 1, 7) AS month, COUNT(*) AS cnt
+        FROM placement_drives
+        GROUP BY substr(created_at, 1, 7)
+        ORDER BY month ASC
+        """
+    ).fetchall()
+
+    chart_data = {
+        "drive_labels": [row["drive_name"] or row["job_title"] for row in drive_rows],
+        "drive_counts": [row["applicant_count"] for row in drive_rows],
+        "status_labels": [row["status"] for row in status_rows],
+        "status_counts": [row["cnt"] for row in status_rows],
+        "months": [row["month"] for row in drive_created_rows],
+        "month_counts": [row["cnt"] for row in drive_created_rows],
+    }
+    return render_template("admin/dashboard.html", stats=stats, chart_data=chart_data)
 
 
 @admin_bp.route("/companies")

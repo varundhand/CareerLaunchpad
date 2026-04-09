@@ -68,7 +68,7 @@
               {% else %}—{% endif %}
             </td>
             <td class="small text-muted">
-              {{ row.applied_at[:10] if row.applied_at else '—' }}
+              {{ row.applied_at.strftime('%Y-%m-%d') if row.applied_at else '—' }}
             </td>
             <td>
               <span class="badge rounded-pill {{ sc[row.status] }} text-capitalize">

@@ -32,11 +32,13 @@ def create_app(config_name="default"):
     from app.admin.routes   import admin_bp
     from app.company.routes import company_bp
     from app.student.routes import student_bp
+    from app.api import api_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp,   url_prefix="/admin")
     app.register_blueprint(company_bp, url_prefix="/company")
     app.register_blueprint(student_bp, url_prefix="/student")
+    app.register_blueprint(api_bp)
 
     # ── Root redirect ──────────────────────────────────────────────────
     @app.route("/")

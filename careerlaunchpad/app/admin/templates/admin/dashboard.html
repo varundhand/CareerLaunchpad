@@ -50,5 +50,91 @@
       </div>
     </div>
   </div>
+
+  <div class="row g-3 mt-1">
+    <div class="col-12 col-lg-7">
+      <div class="card h-100 p-3">
+        <div class="fw-semibold mb-3">Applications per Drive</div>
+        <canvas id="applicationsPerDriveChart" height="150"></canvas>
+      </div>
+    </div>
+    <div class="col-12 col-lg-5">
+      <div class="card h-100 p-3 mb-3">
+        <div class="fw-semibold mb-3">Application Status Distribution</div>
+        <canvas id="applicationStatusChart" height="150"></canvas>
+      </div>
+      <div class="card h-100 p-3">
+        <div class="fw-semibold mb-3">Drives Created Over Time</div>
+        <canvas id="drivesCreatedChart" height="150"></canvas>
+      </div>
+    </div>
+  </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+  const chartData = JSON.parse(document.getElementById('admin-chart-data').textContent);
+
+  const driveCtx = document.getElementById('applicationsPerDriveChart');
+  if (driveCtx) {
+    new Chart(driveCtx, {
+      type: 'bar',
+      data: {
+        labels: chartData.drive_labels,
+        datasets: [{
+          label: 'Applications',
+          data: chartData.drive_counts,
+          backgroundColor: 'rgba(139, 92, 246, 0.75)',
+          borderRadius: 10,
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true, ticks: { precision: 0 } }
+        }
+      }
+    });
+  }
+
+  const statusCtx = document.getElementById('applicationStatusChart');
+  if (statusCtx) {
+    new Chart(statusCtx, {
+      type: 'pie',
+      data: {
+        labels: chartData.status_labels,
+        datasets: [{
+          data: chartData.status_counts,
+          backgroundColor: ['#8b5cf6', '#22c55e', '#f59e0b', '#ef4444'],
+        }]
+      },
+      options: { responsive: true }
+    });
+  }
+
+  const drivesCtx = document.getElementById('drivesCreatedChart');
+  if (drivesCtx) {
+    new Chart(drivesCtx, {
+      type: 'line',
+      data: {
+        labels: chartData.months,
+        datasets: [{
+          label: 'Drives Created',
+          data: chartData.month_counts,
+          borderColor: '#22c55e',
+          backgroundColor: 'rgba(34, 197, 94, 0.18)',
+          fill: true,
+          tension: 0.35,
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true, ticks: { precision: 0 } }
+        }
+      }
+    });
+  }
+</script>
+<script id="admin-chart-data" type="application/json">{{ chart_data | tojson }}</script>
 {% endblock %}

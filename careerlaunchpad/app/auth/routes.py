@@ -1,3 +1,6 @@
+import os
+import re
+
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from app.models import User, Company, Student
@@ -20,6 +23,10 @@ def _redirect_dashboard():
         return redirect(url_for("student.dashboard"))
 
 
+def _is_valid_email(email):
+    return bool(re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email or ""))
+
+
 @auth_bp.route("/login", methods=["GET", "POST"])
 # @csrf.exempt
 def login():
@@ -32,6 +39,10 @@ def login():
 
         if not email or not password:
             flash("Email and password are required.", "danger")
+            return render_template("auth/login.html")
+
+        if not _is_valid_email(email):
+            flash("Enter a valid email address.", "danger")
             return render_template("auth/login.html")
 
         user = User.get_by_email(email)
@@ -87,6 +98,8 @@ def register_student():
             errors.append("Full name is required.")
         if not email:
             errors.append("Email is required.")
+        elif not _is_valid_email(email):
+            errors.append("Enter a valid email address.")
         if not password or len(password) < 6:
             errors.append("Password must be at least 6 characters.")
         if User.get_by_email(email):
@@ -147,6 +160,8 @@ def register_company():
             errors.append("Contact person name is required.")
         if not email:
             errors.append("Email is required.")
+        elif not _is_valid_email(email):
+            errors.append("Enter a valid email address.")
         if not password or len(password) < 6:
             errors.append("Password must be at least 6 characters.")
         if not company_name:

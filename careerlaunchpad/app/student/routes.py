@@ -1,6 +1,6 @@
 import os
 import uuid
-from datetime import date
+from datetime import date, datetime
 
 from flask import (
     Blueprint,
@@ -42,11 +42,26 @@ def _allowed_file(filename):
     return ext in current_app.config.get("ALLOWED_EXTENSIONS", set())
 
 
+def _resume_too_large(resume_file):
+    try:
+        current_pos = resume_file.stream.tell()
+        resume_file.stream.seek(0, os.SEEK_END)
+        size = resume_file.stream.tell()
+        resume_file.stream.seek(current_pos, os.SEEK_SET)
+        return size > current_app.config.get("MAX_CONTENT_LENGTH", 0)
+    except Exception:
+        return False
+
+
 def _is_deadline_over(deadline_value):
     if not deadline_value:
         return False
     try:
-        return deadline_value < date.today().isoformat()
+        if isinstance(deadline_value, datetime):
+            return deadline_value.date() < date.today()
+        if isinstance(deadline_value, date):
+            return deadline_value < date.today()
+        return str(deadline_value) < date.today().isoformat()
     except Exception:
         return False
 
@@ -253,6 +268,8 @@ def profile():
         if resume_file and resume_file.filename:
             if not _allowed_file(resume_file.filename):
                 errors.append("Only PDF resumes are allowed.")
+            elif _resume_too_large(resume_file):
+                errors.append("Resume must be 5 MB or smaller.")
             else:
                 ext = secure_filename(resume_file.filename).rsplit(".", 1)[1].lower()
                 filename = f"student_{student.id}_{uuid.uuid4().hex[:8]}.{ext}"

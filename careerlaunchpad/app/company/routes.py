@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
@@ -22,6 +22,19 @@ def _current_company():
 
 def _is_editable_drive_status(status):
     return status not in {"closed", "rejected"}
+
+
+def _deadline_is_passed(deadline_value):
+    if not deadline_value:
+        return False
+    try:
+        if isinstance(deadline_value, datetime):
+            return deadline_value.date() < date.today()
+        if isinstance(deadline_value, date):
+            return deadline_value < date.today()
+        return str(deadline_value) < date.today().isoformat()
+    except Exception:
+        return False
 
 
 @company_bp.route("/dashboard")
@@ -53,7 +66,7 @@ def dashboard():
     closed = []
     for d in rows:
         is_closed = d["status"] in {"closed", "rejected"}
-        if d["application_deadline"] and d["application_deadline"] < today:
+        if _deadline_is_passed(d["application_deadline"]):
             is_closed = True
         if is_closed:
             closed.append(d)
