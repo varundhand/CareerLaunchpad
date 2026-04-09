@@ -1,0 +1,107 @@
+{% extends "auth/base.html" %}
+{% block title %}Company Dashboard - CareerLaunchpad{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">Company Dashboard</h3>
+    {% if company.approval_status == 'approved' %}
+      <a class="btn btn-primary" href="{{ url_for('company.create_drive') }}">Create Drive</a>
+    {% endif %}
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="text-muted small">Company Name</div>
+          <div class="fw-semibold">{{ company.company_name }}</div>
+        </div>
+        <div class="col-md-4">
+          <div class="text-muted small">HR Contact</div>
+          <div class="fw-semibold">{{ company.hr_contact or '-' }}</div>
+        </div>
+        <div class="col-md-4">
+          <div class="text-muted small">Approval Status</div>
+          <span class="badge text-bg-secondary">{{ company.approval_status }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-12 col-lg-6">
+      <div class="card h-100">
+        <div class="card-header bg-white fw-semibold">Upcoming Drives</div>
+        <div class="table-responsive">
+          <table class="table table-striped align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Deadline</th>
+                <th>Applicants</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for d in upcoming_drives %}
+              <tr>
+                <td>{{ d.job_title }}</td>
+                <td>{{ d.application_deadline or '-' }}</td>
+                <td>{{ d.applicant_count }}</td>
+                <td class="text-end">
+                  <div class="btn-group btn-group-sm">
+                    <a class="btn btn-outline-primary" href="{{ url_for('company.edit_drive', drive_id=d.id) }}">Edit</a>
+                    <a class="btn btn-outline-secondary" href="{{ url_for('company.drive_applications', drive_id=d.id) }}">Applicants</a>
+                    <form method="POST" action="{{ url_for('company.close_drive', drive_id=d.id) }}" class="d-inline">
+                      <button type="submit" class="btn btn-outline-warning">Close</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('company.delete_drive', drive_id=d.id) }}" class="d-inline">
+                      <button type="submit" class="btn btn-outline-danger">Delete</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="4" class="text-center text-muted py-3">No upcoming drives.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+      <div class="card h-100">
+        <div class="card-header bg-white fw-semibold">Closed / Rejected Drives</div>
+        <div class="table-responsive">
+          <table class="table table-striped align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Applicants</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for d in closed_drives %}
+              <tr>
+                <td>{{ d.job_title }}</td>
+                <td><span class="badge text-bg-secondary">{{ d.status }}</span></td>
+                <td>{{ d.applicant_count }}</td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="3" class="text-center text-muted py-3">No closed drives.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

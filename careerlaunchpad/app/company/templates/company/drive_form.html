@@ -1,0 +1,39 @@
+{% extends "auth/base.html" %}
+{% block title %}{% if mode == 'create' %}Create Drive{% else %}Edit Drive{% endif %} - CareerLaunchpad{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width: 760px;">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">{% if mode == 'create' %}Create Placement Drive{% else %}Edit Placement Drive{% endif %}</h3>
+    <a class="btn btn-outline-secondary" href="{{ url_for('company.dashboard') }}">Back</a>
+  </div>
+
+  <div class="card p-3 p-md-4">
+    <form method="POST">
+      <div class="mb-3">
+        <label class="form-label">Title</label>
+        <input class="form-control" type="text" name="title"
+               value="{{ request.form.get('title', drive.job_title if drive else '') }}" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Description</label>
+        <textarea class="form-control" name="description" rows="4">{{ request.form.get('description', drive.job_description if drive else '') }}</textarea>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Eligibility</label>
+        <textarea class="form-control" name="eligibility" rows="3">{{ request.form.get('eligibility', drive.eligibility if drive else '') }}</textarea>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label">Application Deadline</label>
+        <input class="form-control" type="date" name="deadline"
+               value="{{ request.form.get('deadline', drive.application_deadline if drive else '') }}">
+      </div>
+
+      <button class="btn btn-primary" type="submit">{% if mode == 'create' %}Create Drive{% else %}Save Changes{% endif %}</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

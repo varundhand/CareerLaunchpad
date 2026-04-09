@@ -1,0 +1,80 @@
+{% extends "auth/base.html" %}
+{% block title %}Application Review - CareerLaunchpad{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width: 860px;">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">Application #{{ app_row.id }}</h3>
+    <a class="btn btn-outline-secondary" href="{{ url_for('company.drive_applications', drive_id=app_row.drive_id) }}">Back to Applicants</a>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="text-muted small">Student</div>
+          <div class="fw-semibold">{{ app_row.student_name }}</div>
+          <div class="text-muted">{{ app_row.student_email }}</div>
+        </div>
+        <div class="col-md-6">
+          <div class="text-muted small">Drive</div>
+          <div class="fw-semibold">{{ app_row.drive_name }}</div>
+          <div class="text-muted">{{ app_row.job_title }}</div>
+        </div>
+        <div class="col-md-4">
+          <div class="text-muted small">Department</div>
+          <div>{{ app_row.department or '-' }}</div>
+        </div>
+        <div class="col-md-4">
+          <div class="text-muted small">CGPA</div>
+          <div>{{ app_row.cgpa if app_row.cgpa is not none else '-' }}</div>
+        </div>
+        <div class="col-md-4">
+          <div class="text-muted small">Graduation Year</div>
+          <div>{{ app_row.graduation_year or '-' }}</div>
+        </div>
+        <div class="col-md-4">
+          <div class="text-muted small">Phone</div>
+          <div>{{ app_row.phone or '-' }}</div>
+        </div>
+        <div class="col-md-4">
+          <div class="text-muted small">Current Status</div>
+          <span class="badge text-bg-secondary">{{ app_row.status }}</span>
+        </div>
+        <div class="col-md-4">
+          <div class="text-muted small">Resume</div>
+          {% if app_row.resume_path %}
+            <a href="{{ url_for('static', filename=app_row.resume_path) }}" target="_blank">Open Resume</a>
+          {% else %}
+            <span>N/A</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card p-3">
+    {% if app_row.drive_status in ['closed', 'rejected'] %}
+      <div class="alert alert-warning mb-0">
+        This drive is {{ app_row.drive_status }}. Application status cannot be updated.
+      </div>
+    {% else %}
+      <form method="POST" action="{{ url_for('company.update_application_status', application_id=app_row.id) }}">
+        <label class="form-label">Update Application Status</label>
+        <div class="row g-2">
+          <div class="col-md-9">
+            <select class="form-select" name="status" required>
+              <option value="shortlisted">Shortlisted</option>
+              <option value="selected">Selected</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+          <div class="col-md-3 d-grid">
+            <button class="btn btn-primary" type="submit">Update</button>
+          </div>
+        </div>
+      </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

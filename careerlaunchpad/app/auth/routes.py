@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from app.models import User, Company, Student
 from app.database import get_db
+# from app import csrf
 
 auth_bp = Blueprint(
     "auth", __name__,
@@ -20,6 +21,7 @@ def _redirect_dashboard():
 
 
 @auth_bp.route("/login", methods=["GET", "POST"])
+# @csrf.exempt
 def login():
     if current_user.is_authenticated:
         return _redirect_dashboard()
