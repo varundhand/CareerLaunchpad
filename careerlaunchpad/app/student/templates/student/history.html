@@ -1,0 +1,101 @@
+{% extends "auth/base.html" %}
+{% block title %}Application History — CareerLaunchpad{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+    <div>
+      <h4 class="fw-bold mb-0">
+        <i class="bi bi-clock-history me-2" style="color:#6f42c1;"></i>
+        Application History
+      </h4>
+      <small class="text-muted">{{ current_user.name }}</small>
+    </div>
+    <a href="{{ url_for('student.dashboard') }}" class="btn btn-outline-secondary btn-sm">
+      <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+    </a>
+  </div>
+
+  {% if history_rows %}
+
+  <!-- Summary pills -->
+  <div class="d-flex gap-2 flex-wrap mb-3">
+    {% set total      = history_rows|length %}
+    {% set selected   = history_rows | selectattr('status','equalto','selected')    | list | length %}
+    {% set shortlisted= history_rows | selectattr('status','equalto','shortlisted') | list | length %}
+    {% set rejected   = history_rows | selectattr('status','equalto','rejected')    | list | length %}
+    {% set applied_n  = history_rows | selectattr('status','equalto','applied')     | list | length %}
+
+    <span class="badge rounded-pill bg-secondary">Total: {{ total }}</span>
+    <span class="badge rounded-pill badge-selected">Selected: {{ selected }}</span>
+    <span class="badge rounded-pill badge-shortlisted">Shortlisted: {{ shortlisted }}</span>
+    <span class="badge rounded-pill badge-applied">Applied: {{ applied_n }}</span>
+    <span class="badge rounded-pill badge-rejected">Rejected: {{ rejected }}</span>
+  </div>
+
+  <!-- History table -->
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>Company</th>
+            <th>Drive / Job Title</th>
+            <th>Interview type</th>
+            <th>Salary</th>
+            <th>Applied on</th>
+            <th>Status</th>
+            <th>Remark</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in history_rows %}
+          {% set sc = {'applied':'badge-applied','shortlisted':'badge-shortlisted',
+                       'selected':'badge-selected','rejected':'badge-rejected'} %}
+          <tr>
+            <td class="text-muted small">{{ loop.index }}</td>
+            <td class="fw-semibold small">{{ row.company_name }}</td>
+            <td>
+              <div class="small fw-semibold">{{ row.job_title }}</div>
+              <div class="text-muted" style="font-size:11px;">{{ row.drive_name }}</div>
+            </td>
+            <td class="small">{{ row.interview_type or '—' }}</td>
+            <td class="small">
+              {% if row.salary %}
+                <i class="bi bi-currency-rupee"></i>{{ row.salary }}
+              {% else %}—{% endif %}
+            </td>
+            <td class="small text-muted">
+              {{ row.applied_at[:10] if row.applied_at else '—' }}
+            </td>
+            <td>
+              <span class="badge rounded-pill {{ sc[row.status] }} text-capitalize">
+                {{ row.status }}
+              </span>
+            </td>
+            <td class="small text-muted">{{ row.remark or '—' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% else %}
+  <div class="card">
+    <div class="card-body text-center py-5 text-muted">
+      <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+      <h6>No applications yet</h6>
+      <p class="small mb-3">Browse available drives and apply to get started.</p>
+      <a href="{{ url_for('student.dashboard') }}"
+         class="btn btn-sm text-white" style="background:#6f42c1;border-radius:8px;">
+        Browse Drives
+      </a>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

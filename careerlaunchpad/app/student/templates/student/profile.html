@@ -1,0 +1,111 @@
+{% extends "auth/base.html" %}
+{% block title %}My Profile — CareerLaunchpad{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width:640px;">
+
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <h4 class="fw-bold mb-0">
+      <i class="bi bi-person-circle me-2" style="color:#6f42c1;"></i>
+      My Profile
+    </h4>
+    <a href="{{ url_for('student.dashboard') }}" class="btn btn-outline-secondary btn-sm">
+      <i class="bi bi-arrow-left me-1"></i> Back
+    </a>
+  </div>
+
+  <!-- Resume status banner -->
+  {% if student.resume_path %}
+  <div class="alert alert-success d-flex align-items-center gap-2 py-2 mb-3">
+    <i class="bi bi-file-earmark-pdf-fill"></i>
+    Resume uploaded.
+    <a href="{{ url_for('student.view_resume', filename=student.resume_path) }}"
+       target="_blank" class="ms-1 alert-link">View PDF</a>
+  </div>
+  {% else %}
+  <div class="alert alert-warning d-flex align-items-center gap-2 py-2 mb-3">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    No resume uploaded yet. Add one below to strengthen your applications.
+  </div>
+  {% endif %}
+
+  <div class="card">
+    <div class="card-body p-4">
+      <form method="POST" action="{{ url_for('student.profile') }}"
+            enctype="multipart/form-data">
+
+        <!-- Name -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold" for="name">Full name</label>
+          <input type="text" id="name" name="name" class="form-control"
+                 value="{{ user.name }}" required>
+        </div>
+
+        <!-- Department -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold" for="department">Department</label>
+          <input type="text" id="department" name="department" class="form-control"
+                 placeholder="e.g. Computer Science and Engineering"
+                 value="{{ student.department or '' }}">
+        </div>
+
+        <div class="row g-3 mb-3">
+          <!-- CGPA -->
+          <div class="col-sm-6">
+            <label class="form-label fw-semibold" for="cgpa">CGPA</label>
+            <input type="number" id="cgpa" name="cgpa" class="form-control"
+                   step="0.01" min="0" max="10" placeholder="e.g. 8.5"
+                   value="{{ student.cgpa or '' }}">
+          </div>
+          <!-- Graduation year -->
+          <div class="col-sm-6">
+            <label class="form-label fw-semibold" for="graduation_year">Graduation year</label>
+            <input type="number" id="graduation_year" name="graduation_year"
+                   class="form-control" placeholder="e.g. 2026"
+                   value="{{ student.graduation_year or '' }}">
+          </div>
+        </div>
+
+        <!-- Phone -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold" for="phone">Phone</label>
+          <input type="tel" id="phone" name="phone" class="form-control"
+                 placeholder="+91 98765 43210"
+                 value="{{ student.phone or '' }}">
+        </div>
+
+        <!-- Email (read-only) -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Email address</label>
+          <input type="email" class="form-control bg-light" value="{{ user.email }}" disabled>
+          <div class="form-text">Email cannot be changed.</div>
+        </div>
+
+        <!-- Resume upload -->
+        <div class="mb-4">
+          <label class="form-label fw-semibold" for="resume">
+            Resume (PDF only, max 5 MB)
+          </label>
+          <input type="file" id="resume" name="resume"
+                 class="form-control" accept=".pdf">
+          {% if student.resume_path %}
+          <div class="form-text">
+            Current file: {{ student.resume_path }} —
+            <a href="{{ url_for('student.view_resume', filename=student.resume_path) }}"
+               target="_blank" style="color:#6f42c1;">view</a>.
+            Uploading a new file will replace it.
+          </div>
+          {% endif %}
+        </div>
+
+        <button type="submit" class="btn text-white fw-semibold px-4"
+                style="background:#6f42c1;border-radius:8px;">
+          <i class="bi bi-floppy me-1"></i> Save Changes
+        </button>
+
+      </form>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,171 @@
+{% extends "auth/base.html" %}
+{% block title %}Dashboard — CareerLaunchpad{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Header -->
+  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+    <div>
+      <h4 class="fw-bold mb-0">
+        <i class="bi bi-mortarboard-fill me-2" style="color:#6f42c1;"></i>
+        Welcome, {{ current_user.name }}
+      </h4>
+      <small class="text-muted">
+        {{ student.department or 'No department set' }}
+        {% if student.cgpa %}&nbsp;·&nbsp; CGPA: {{ student.cgpa }}{% endif %}
+      </small>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{{ url_for('student.history') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-clock-history me-1"></i> History
+      </a>
+      <a href="{{ url_for('student.profile') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-person-gear me-1"></i> Edit Profile
+      </a>
+    </div>
+  </div>
+
+  <!-- Stat cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="card stat-card p-3" style="border-left-color:#6f42c1;">
+        <div class="text-muted small">Open Drives</div>
+        <div class="fs-3 fw-bold" style="color:#6f42c1;">{{ approved_drives|length }}</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card stat-card p-3" style="border-left-color:#0d6efd;">
+        <div class="text-muted small">Applied</div>
+        <div class="fs-3 fw-bold text-primary">{{ applied|length }}</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card stat-card p-3" style="border-left-color:#198754;">
+        <div class="text-muted small">Selected</div>
+        <div class="fs-3 fw-bold text-success">
+          {{ applied | selectattr('status','equalto','selected') | list | length }}
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card stat-card p-3" style="border-left-color:#ffc107;">
+        <div class="text-muted small">Shortlisted</div>
+        <div class="fs-3 fw-bold text-warning">
+          {{ applied | selectattr('status','equalto','shortlisted') | list | length }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- ── LEFT: Available Drives ── -->
+    <div class="col-lg-7">
+      <div class="card h-100">
+        <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+          <span class="fw-semibold"><i class="bi bi-briefcase me-1" style="color:#6f42c1;"></i> Available Drives</span>
+          <span class="badge bg-secondary rounded-pill">{{ approved_drives|length }}</span>
+        </div>
+        <div class="card-body p-0">
+          {% if approved_drives %}
+            <div class="list-group list-group-flush">
+              {% for drive in approved_drives %}
+              <div class="list-group-item px-3 py-3">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <div class="fw-semibold">{{ drive.job_title }}</div>
+                    <div class="text-muted small">
+                      <i class="bi bi-building me-1"></i>{{ drive.company_name }}
+                      {% if drive.location %}
+                        &nbsp;·&nbsp;<i class="bi bi-geo-alt me-1"></i>{{ drive.location }}
+                      {% endif %}
+                    </div>
+                    {% if drive.salary %}
+                      <div class="small text-success mt-1">
+                        <i class="bi bi-currency-rupee"></i>{{ drive.salary }}
+                      </div>
+                    {% endif %}
+                    {% if drive.application_deadline %}
+                      <div class="small text-muted mt-1">
+                        <i class="bi bi-calendar3 me-1"></i>Deadline: {{ drive.application_deadline }}
+                      </div>
+                    {% endif %}
+                  </div>
+                  <div class="d-flex flex-column gap-1 ms-2">
+                    <a href="{{ url_for('student.drive_detail', drive_id=drive.id) }}"
+                       class="btn btn-outline-secondary btn-sm">
+                      View
+                    </a>
+                    {% if drive.id in applied_drive_ids %}
+                      <span class="btn btn-sm btn-success disabled">
+                        <i class="bi bi-check2"></i> Applied
+                      </span>
+                    {% else %}
+                      <form method="POST"
+                            action="{{ url_for('student.apply', drive_id=drive.id) }}">
+                        <button type="submit" class="btn btn-sm text-white w-100"
+                                style="background:#6f42c1;">
+                          Apply
+                        </button>
+                      </form>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="text-center text-muted py-5">
+              <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+              No approved drives available right now.
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RIGHT: My Applications ── -->
+    <div class="col-lg-5">
+      <div class="card h-100">
+        <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+          <span class="fw-semibold"><i class="bi bi-send me-1" style="color:#6f42c1;"></i> My Applications</span>
+          <a href="{{ url_for('student.history') }}" class="small text-decoration-none" style="color:#6f42c1;">
+            Full history →
+          </a>
+        </div>
+        <div class="card-body p-0">
+          {% if applied %}
+            <div class="list-group list-group-flush">
+              {% for app in applied %}
+              <div class="list-group-item px-3 py-3">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <div class="fw-semibold small">{{ app.job_title }}</div>
+                    <div class="text-muted" style="font-size:12px;">{{ app.company_name }}</div>
+                    <div class="text-muted" style="font-size:11px;">
+                      {{ app.applied_at[:10] if app.applied_at else '' }}
+                    </div>
+                  </div>
+                  {% set sc = {'applied':'badge-applied','shortlisted':'badge-shortlisted',
+                               'selected':'badge-selected','rejected':'badge-rejected'} %}
+                  <span class="badge rounded-pill {{ sc[app.status] }} text-capitalize">
+                    {{ app.status }}
+                  </span>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="text-center text-muted py-5">
+              <i class="bi bi-file-earmark-x fs-2 d-block mb-2"></i>
+              You haven't applied to any drives yet.
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /row -->
+</div>
+{% endblock %}
