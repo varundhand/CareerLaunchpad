@@ -61,19 +61,19 @@
       {% if drive.job_description %}
       <div class="mb-3">
         <div class="text-muted small mb-1">Job description</div>
-        <div class="bg-light rounded p-3" style="white-space:pre-wrap;">{{ drive.job_description }}</div>
+        <div class="bg-dark rounded p-3" style="white-space:pre-wrap;">{{ drive.job_description }}</div>
       </div>
       {% endif %}
 
       {% if drive.eligibility %}
       <div class="mb-4">
         <div class="text-muted small mb-1">Eligibility criteria</div>
-        <div class="bg-light rounded p-3" style="white-space:pre-wrap;">{{ drive.eligibility }}</div>
+        <div class="bg-dark rounded p-3" style="white-space:pre-wrap;">{{ drive.eligibility }}</div>
       </div>
       {% endif %}
 
       <!-- Company info -->
-      <div class="border rounded p-3 mb-4 bg-light">
+      <div class="border rounded p-3 mb-4 dark">
         <div class="fw-semibold mb-1">About {{ company.company_name }}</div>
         <div class="text-muted small">
           {% if company.description %}{{ company.description }}{% endif %}

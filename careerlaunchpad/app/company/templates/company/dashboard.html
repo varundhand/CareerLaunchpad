@@ -2,7 +2,63 @@
 {% block title %}Company Dashboard - CareerLaunchpad{% endblock %}
 
 {% block content %}
-<div class="container py-4">
+<div class="container py-4 company-dashboard">
+  <style>
+    .company-dashboard .card-header {
+      background: rgba(255, 255, 255, 0.05) !important;
+      color: #f8fbff;
+    }
+
+    .company-dashboard .table td,
+    .company-dashboard .table th {
+      color: #f8fbff;
+      vertical-align: middle;
+    }
+
+    .company-dashboard .actions-cell {
+      min-width: 300px;
+    }
+
+    .company-dashboard .action-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(92px, 1fr));
+      gap: 0.45rem;
+      width: min(100%, 260px);
+      margin-left: auto;
+    }
+
+    .company-dashboard .action-buttons form {
+      margin: 0;
+    }
+
+    .company-dashboard .action-buttons .btn {
+      width: 100%;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    @media (max-width: 767.98px) {
+      .company-dashboard .actions-cell {
+        min-width: 200px;
+      }
+
+      .company-dashboard .action-buttons {
+        width: 100%;
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .company-dashboard .actions-cell {
+        min-width: 360px;
+      }
+
+      .company-dashboard .action-buttons {
+        width: min(100%, 350px);
+        grid-template-columns: repeat(4, minmax(78px, 1fr));
+      }
+    }
+  </style>
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h3 class="mb-0">Company Dashboard</h3>
     {% if company.approval_status == 'approved' %}
@@ -32,7 +88,7 @@
   <div class="row g-3">
     <div class="col-12 col-lg-6">
       <div class="card h-100">
-        <div class="card-header bg-white fw-semibold">Upcoming Drives</div>
+        <div class="card-header fw-semibold">Upcoming Drives</div>
         <div class="table-responsive">
           <table class="table table-striped align-middle mb-0">
             <thead>
@@ -49,15 +105,15 @@
                 <td>{{ d.job_title }}</td>
                 <td>{{ d.application_deadline or '-' }}</td>
                 <td>{{ d.applicant_count }}</td>
-                <td class="text-end">
-                  <div class="btn-group btn-group-sm">
-                    <a class="btn btn-outline-primary" href="{{ url_for('company.edit_drive', drive_id=d.id) }}">Edit</a>
-                    <a class="btn btn-outline-secondary" href="{{ url_for('company.drive_applications', drive_id=d.id) }}">Applicants</a>
+                <td class="text-end actions-cell">
+                  <div class="action-buttons">
+                    <a class="btn btn-outline-primary btn-sm" href="{{ url_for('company.edit_drive', drive_id=d.id) }}">Edit</a>
+                    <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('company.drive_applications', drive_id=d.id) }}">Applicants</a>
                     <form method="POST" action="{{ url_for('company.close_drive', drive_id=d.id) }}" class="d-inline">
-                      <button type="submit" class="btn btn-outline-warning">Close</button>
+                      <button type="submit" class="btn btn-outline-warning btn-sm">Close</button>
                     </form>
                     <form method="POST" action="{{ url_for('company.delete_drive', drive_id=d.id) }}" class="d-inline">
-                      <button type="submit" class="btn btn-outline-danger">Delete</button>
+                      <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
                     </form>
                   </div>
                 </td>
@@ -75,7 +131,7 @@
 
     <div class="col-12 col-lg-6">
       <div class="card h-100">
-        <div class="card-header bg-white fw-semibold">Closed / Rejected Drives</div>
+        <div class="card-header fw-semibold">Closed / Rejected Drives</div>
         <div class="table-responsive">
           <table class="table table-striped align-middle mb-0">
             <thead>

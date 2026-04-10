@@ -3,6 +3,25 @@
 
 {% block content %}
 <div class="container py-4">
+  <style>
+    .chart-wrapper {
+      min-height: 180px;
+      position: relative;
+    }
+
+    .chart-empty-state {
+      min-height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(248, 251, 255, 0.72);
+      font-weight: 500;
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+  </style>
+
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h3 class="mb-0">Admin Dashboard</h3>
     <div class="btn-group">
@@ -55,28 +74,61 @@
     <div class="col-12 col-lg-7">
       <div class="card h-100 p-3">
         <div class="fw-semibold mb-3">Applications per Drive</div>
-        <canvas id="applicationsPerDriveChart" height="150"></canvas>
+        <div class="chart-wrapper">
+          <canvas id="applicationsPerDriveChart" height="150"></canvas>
+          <div id="applicationsPerDriveEmpty" class="chart-empty-state d-none">No data available</div>
+        </div>
       </div>
     </div>
     <div class="col-12 col-lg-5">
-      <div class="card h-100 p-3 mb-3">
-        <div class="fw-semibold mb-3">Application Status Distribution</div>
-        <canvas id="applicationStatusChart" height="150"></canvas>
-      </div>
       <div class="card h-100 p-3">
+        <div class="fw-semibold mb-3">Application Status Distribution</div>
+        <div class="chart-wrapper">
+          <canvas id="applicationStatusChart" height="150"></canvas>
+          <div id="applicationStatusEmpty" class="chart-empty-state d-none">No data available</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="card p-3">
         <div class="fw-semibold mb-3">Drives Created Over Time</div>
-        <canvas id="drivesCreatedChart" height="150"></canvas>
+        <div class="chart-wrapper">
+          <canvas id="drivesCreatedChart" height="150"></canvas>
+          <div id="drivesCreatedEmpty" class="chart-empty-state d-none">No data available</div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
+<script id="admin-chart-data" type="application/json">{{ chart_data | tojson }}</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
-  const chartData = JSON.parse(document.getElementById('admin-chart-data').textContent);
+  const chartDataElement = document.getElementById('admin-chart-data');
+  const chartData = chartDataElement ? JSON.parse(chartDataElement.textContent) : {};
+  const hasMeaningfulData = (values) => Array.isArray(values)
+    && values.length > 0
+    && values.some((value) => Number(value) > 0);
+
+  const toggleChartState = (canvasId, emptyStateId, hasData) => {
+    const canvas = document.getElementById(canvasId);
+    const emptyState = document.getElementById(emptyStateId);
+
+    if (!canvas || !emptyState) return;
+
+    if (hasData) {
+      canvas.classList.remove('d-none');
+      emptyState.classList.add('d-none');
+    } else {
+      canvas.classList.add('d-none');
+      emptyState.classList.remove('d-none');
+    }
+  };
 
   const driveCtx = document.getElementById('applicationsPerDriveChart');
-  if (driveCtx) {
+  const hasDriveData = hasMeaningfulData(chartData.drive_counts);
+  toggleChartState('applicationsPerDriveChart', 'applicationsPerDriveEmpty', hasDriveData);
+  if (driveCtx && hasDriveData) {
     new Chart(driveCtx, {
       type: 'bar',
       data: {
@@ -98,7 +150,9 @@
   }
 
   const statusCtx = document.getElementById('applicationStatusChart');
-  if (statusCtx) {
+  const hasStatusData = hasMeaningfulData(chartData.status_counts);
+  toggleChartState('applicationStatusChart', 'applicationStatusEmpty', hasStatusData);
+  if (statusCtx && hasStatusData) {
     new Chart(statusCtx, {
       type: 'pie',
       data: {
@@ -113,7 +167,9 @@
   }
 
   const drivesCtx = document.getElementById('drivesCreatedChart');
-  if (drivesCtx) {
+  const hasMonthlyDriveData = hasMeaningfulData(chartData.month_counts);
+  toggleChartState('drivesCreatedChart', 'drivesCreatedEmpty', hasMonthlyDriveData);
+  if (drivesCtx && hasMonthlyDriveData) {
     new Chart(drivesCtx, {
       type: 'line',
       data: {
@@ -136,5 +192,4 @@
     });
   }
 </script>
-<script id="admin-chart-data" type="application/json">{{ chart_data | tojson }}</script>
 {% endblock %}

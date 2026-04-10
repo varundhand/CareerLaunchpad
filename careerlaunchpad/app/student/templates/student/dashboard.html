@@ -2,7 +2,36 @@
 {% block title %}Dashboard — CareerLaunchpad{% endblock %}
 
 {% block content %}
-<div class="container py-4">
+<div class="container py-4 student-dashboard">
+  <style>
+    .student-dashboard .list-group {
+      --bs-list-group-bg: transparent;
+      --bs-list-group-border-color: rgba(255, 255, 255, 0.12);
+      --bs-list-group-color: #f8fbff;
+    }
+
+    .student-dashboard .list-group-item {
+      background: rgba(8, 18, 33, 0.45);
+      color: #f8fbff;
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .student-dashboard .list-group-item:hover {
+      background: rgba(139, 92, 246, 0.1);
+    }
+
+    .student-dashboard .btn-view-drive {
+      border-color: rgba(196, 181, 253, 0.75);
+      color: #f3e8ff;
+      background: rgba(139, 92, 246, 0.12);
+    }
+
+    .student-dashboard .btn-view-drive:hover {
+      color: #ffffff;
+      border-color: rgba(196, 181, 253, 0.95);
+      background: rgba(139, 92, 246, 0.28);
+    }
+  </style>
 
   <!-- Header -->
   <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
@@ -94,7 +123,7 @@
                   </div>
                   <div class="d-flex flex-column gap-1 ms-2">
                     <a href="{{ url_for('student.drive_detail', drive_id=drive.id) }}"
-                       class="btn btn-outline-secondary btn-sm">
+                       class="btn btn-outline-secondary btn-sm btn-view-drive">
                       View
                     </a>
                     {% if drive.id in applied_drive_ids %}
